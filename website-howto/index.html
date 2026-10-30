@@ -1,0 +1,884 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <link rel="stylesheet" href="assets/fonts/fonts.css" />
+    <script src="vendor/gsap.min.js"></script>
+    <style>
+      :root {
+        --paper: #fbf8f1;
+        --forest: #0f4c3a;
+        --forest-deep: #0a3529;
+        --gold: #b8903a;
+        --gold-light: #ddbf70;
+        --ink: #1b2a25;
+        --white: #ffffff;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 1080px;
+        height: 1920px;
+        overflow: hidden;
+        background: var(--paper);
+      }
+      #root {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+        font-family: "DM Sans", sans-serif;
+        color: var(--ink);
+      }
+      .layer {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 1080px;
+        height: 1920px;
+      }
+      #bg {
+        background: var(--paper);
+      }
+
+      /* Three-colour stripe, as on the website */
+      #stripe {
+        height: 14px;
+        z-index: 50;
+        display: flex;
+      }
+      #stripe i {
+        flex: 1;
+        display: block;
+        height: 14px;
+      }
+      #stripe-b {
+        background: #0038a8;
+        transform-origin: 0% 50%;
+      }
+      #stripe-g {
+        background: #b8903a;
+        transform-origin: 0% 50%;
+      }
+      #stripe-r {
+        background: #ce1126;
+        transform-origin: 0% 50%;
+      }
+
+      /* Caption chips */
+      .cap {
+        z-index: 30;
+      }
+      .chip {
+        position: absolute;
+        left: 64px;
+        right: 64px;
+        top: 150px;
+        margin: 0 auto;
+        width: fit-content;
+        max-width: 952px;
+        padding: 30px 44px 34px;
+        border-radius: 32px;
+        background: var(--forest);
+        text-align: center;
+        box-shadow: 0 18px 40px rgba(10, 53, 41, 0.18);
+      }
+      .chip h2 {
+        font-family: "Fraunces", serif;
+        font-weight: 700;
+        font-size: 64px;
+        line-height: 1.12;
+        letter-spacing: -0.01em;
+        color: var(--white);
+      }
+      .chip h2 b {
+        color: var(--gold-light);
+      }
+      .chip p {
+        margin-top: 12px;
+        font-size: 38px;
+        font-weight: 500;
+        line-height: 1.3;
+        color: var(--gold-light);
+      }
+
+      /* Shot 1: logo intro */
+      #s1 {
+        z-index: 10;
+      }
+      #s1-logo {
+        position: absolute;
+        left: 340px;
+        top: 500px;
+        width: 400px;
+        height: 453px;
+      }
+      #s1-ring {
+        position: absolute;
+        left: 250px;
+        top: 437px;
+        width: 580px;
+        height: 580px;
+      }
+      #s1-word {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 1060px;
+        text-align: center;
+        font-family: "Fraunces", serif;
+        font-weight: 700;
+        font-size: 84px;
+        letter-spacing: -0.01em;
+        color: var(--forest);
+      }
+      #s1-word span {
+        display: inline-block;
+        white-space: pre;
+      }
+      #s1-chip {
+        top: 1230px;
+      }
+
+      /* Phone frame: 860 wide, 14px bezel, 48px radius */
+      #phone {
+        z-index: 5;
+      }
+      #phone-frame {
+        position: absolute;
+        left: 110px;
+        top: 560px;
+        width: 860px;
+        height: 1268px;
+        border-radius: 48px;
+        background: #12201b;
+        padding: 14px;
+        box-shadow:
+          0 50px 90px -20px rgba(10, 53, 41, 0.35),
+          0 120px 160px -60px rgba(10, 53, 41, 0.25);
+      }
+      #viewport {
+        position: relative;
+        width: 832px;
+        height: 1240px;
+        border-radius: 34px;
+        overflow: hidden;
+        background: var(--paper);
+      }
+      .screen {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 832px;
+        height: 1240px;
+      }
+      /* Screenshots are 1080 wide; this scales them to the 832px screen. */
+      .k {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 1080px;
+        transform: scale(0.77037);
+        transform-origin: 0 0;
+      }
+      .scroll {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 1080px;
+      }
+      .scroll img.shot {
+        display: block;
+        width: 1080px;
+      }
+      .scroll .pane {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 1080px;
+      }
+
+      /* Overlays drawn on top of the screenshots (in screenshot pixels) */
+      .ring {
+        position: absolute;
+        border: 7px solid var(--gold);
+        border-radius: 30px;
+        box-shadow: 0 0 0 12px rgba(221, 191, 112, 0.35);
+      }
+      .spot {
+        position: absolute;
+        border-radius: 999px;
+        box-shadow: 0 0 0 3000px rgba(10, 53, 41, 0.28);
+      }
+
+      /* Effects */
+      .fx {
+        z-index: 20;
+      }
+      .tap {
+        position: absolute;
+        width: 120px;
+        height: 120px;
+        margin: -60px 0 0 -60px;
+      }
+      .tap .dot {
+        position: absolute;
+        inset: 18px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.55);
+        border: 5px solid var(--gold);
+      }
+      .tap .wave {
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
+        border: 6px solid var(--gold-light);
+      }
+      .badge {
+        position: absolute;
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        background: #ffffff;
+        border: 6px solid var(--gold);
+        box-shadow: 0 10px 24px rgba(10, 53, 41, 0.2);
+      }
+      .badge img {
+        position: absolute;
+        left: 18px;
+        top: 18px;
+        width: 72px;
+        height: 72px;
+      }
+      .badge-wave {
+        position: absolute;
+        inset: -6px;
+        border-radius: 50%;
+        border: 6px solid var(--gold-light);
+      }
+      #s7-sweep {
+        position: absolute;
+        left: 0;
+        top: -100px;
+        width: 260px;
+        height: 960px;
+        background: linear-gradient(90deg, rgba(221, 191, 112, 0) 0%, rgba(221, 191, 112, 0.55) 50%, rgba(221, 191, 112, 0) 100%);
+      }
+      #s9-mask {
+        position: absolute;
+        left: 138px;
+        top: 935px;
+        width: 290px;
+        height: 82px;
+        background: #ffffff;
+      }
+      #s9-caret {
+        position: absolute;
+        left: 0;
+        top: 12px;
+        width: 5px;
+        height: 58px;
+        background: var(--forest);
+      }
+      .s11-hl {
+        position: absolute;
+        left: 60px;
+        width: 760px;
+        height: 70px;
+        border-radius: 16px;
+        background: rgba(221, 191, 112, 0.3);
+      }
+      #s11-fill {
+        position: absolute;
+        left: 129px;
+        top: 2348px;
+        width: 10px;
+        height: 861px;
+        border-radius: 5px;
+        background: var(--gold);
+        transform-origin: 50% 0%;
+      }
+      .s11-dot {
+        width: 110px;
+        height: 110px;
+        border-radius: 50% !important;
+      }
+      #fx8-scrim {
+        position: absolute;
+        left: 0;
+        top: 420px;
+        width: 1080px;
+        height: 1500px;
+        background: rgba(251, 248, 241, 0.9);
+      }
+      #confetti {
+        position: absolute;
+        inset: 0;
+      }
+      #confetti i {
+        position: absolute;
+        top: 0;
+        display: block;
+        border-radius: 3px;
+      }
+      #card {
+        position: absolute;
+        left: 90px;
+        top: 650px;
+        width: 900px;
+        height: 718px;
+        border-radius: 28px;
+        box-shadow: 0 40px 80px -20px rgba(10, 53, 41, 0.45);
+      }
+      #dl {
+        position: absolute;
+        left: 470px;
+        top: 1420px;
+        width: 140px;
+        height: 140px;
+        border-radius: 50%;
+        background: var(--gold-light);
+        box-shadow: 0 16px 30px rgba(10, 53, 41, 0.25);
+      }
+      #dl svg {
+        position: absolute;
+        left: 38px;
+        top: 38px;
+      }
+      #inset {
+        position: absolute;
+        left: 530px;
+        top: 1120px;
+        width: 500px;
+        height: 472px;
+        border-radius: 26px;
+        border: 6px solid var(--gold);
+        box-shadow: 0 40px 70px -20px rgba(10, 53, 41, 0.45);
+      }
+      .doc {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 96px;
+        height: 96px;
+        margin: -48px 0 0 -48px;
+        border-radius: 22px;
+        background: #ffffff;
+        border: 4px solid var(--gold);
+        box-shadow: 0 14px 28px rgba(10, 53, 41, 0.25);
+      }
+      .doc img {
+        position: absolute;
+        left: 14px;
+        top: 14px;
+        width: 60px;
+        height: 60px;
+      }
+
+      /* Shot 12: end card */
+      #s12 {
+        z-index: 40;
+        background: var(--forest);
+        text-align: center;
+      }
+      #s12-logo {
+        position: absolute;
+        left: 375px;
+        top: 600px;
+        width: 330px;
+        height: 373px;
+      }
+      #s12-btn {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 1070px;
+        margin: 0 auto;
+        width: fit-content;
+        padding: 26px 48px;
+        border-radius: 999px;
+        background: var(--gold-light);
+        color: var(--forest-deep);
+        font-size: 38px;
+        font-weight: 600;
+      }
+      #s12-btn-wave {
+        position: absolute;
+        inset: -4px;
+        border-radius: 999px;
+        border: 5px solid var(--gold-light);
+      }
+      #s12-url {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 1230px;
+        font-family: "Fraunces", serif;
+        font-weight: 700;
+        font-size: 70px;
+        color: var(--gold-light);
+      }
+      #s12-url span {
+        display: inline-block;
+      }
+      #s12-credit {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 1360px;
+        font-size: 32px;
+        font-weight: 500;
+        color: #ffffff;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="46"
+      data-width="1080"
+      data-height="1920"
+    >
+      <div id="bg" class="layer clip" data-start="0" data-duration="46" data-track-index="0"></div>
+
+      <div id="stripe" class="layer clip" data-start="0" data-duration="46" data-track-index="5">
+        <i id="stripe-b"></i><i id="stripe-g"></i><i id="stripe-r"></i>
+      </div>
+
+      <!-- Shot 1 · 0–3.5s · logo, ring sweep, wordmark, greeting -->
+      <div id="s1" class="layer clip" data-start="0" data-duration="3.9" data-track-index="1">
+        <svg id="s1-ring" viewBox="0 0 580 580">
+          <circle
+            id="s1-ring-c"
+            cx="290"
+            cy="290"
+            r="280"
+            fill="none"
+            stroke="#B8903A"
+            stroke-width="7"
+            stroke-linecap="round"
+            stroke-dasharray="1760"
+            stroke-dashoffset="1760"
+            transform="rotate(-90 290 290)"
+          />
+        </svg>
+        <img id="s1-logo" src="assets/logo-mascot.png" alt="Pinoy Accountants logo" />
+        <div id="s1-word">
+          <span>P</span><span>i</span><span>n</span><span>o</span><span>y</span><span> </span
+          ><span>A</span><span>c</span><span>c</span><span>o</span><span>u</span><span>n</span
+          ><span>t</span><span>a</span><span>n</span><span>t</span><span>s</span>
+        </div>
+        <div id="s1-chip" class="chip">
+          <h2>Kumusta, Kabayan!</h2>
+          <p>Tax time, sorted online.</p>
+        </div>
+      </div>
+
+      <!-- Phone (shots 2–11) -->
+      <div id="phone" class="layer clip" data-start="3.5" data-duration="39.4" data-track-index="2">
+        <div id="phone-frame">
+          <div id="viewport">
+            <!-- Shot 2 · homepage -->
+            <div id="s2" class="screen clip" data-start="3.5" data-duration="4.4" data-track-index="2">
+              <div class="k">
+                <div id="s2-scroll" class="scroll">
+                  <img class="shot" src="assets/screens/01_homepage.png" alt="Homepage" />
+                  <div id="s2-ring" class="ring" style="left: 42px; top: 914px; width: 996px; height: 388px; border-radius: 40px"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Shot 3 · about you, empty then filled -->
+            <div id="s3" class="screen clip" data-start="7.5" data-duration="4.4" data-track-index="2">
+              <div class="k">
+                <div id="s3-scroll" class="scroll">
+                  <img id="s3-empty" class="shot" src="assets/screens/02_onboard_about_you_empty.png" alt="About you, empty" />
+                  <div id="s3-filled" class="pane">
+                    <img class="shot" src="assets/screens/03_onboard_about_you_filled.png" alt="About you, filled in" />
+                    <div class="ring s3-f" style="left: 96px; top: 300px; width: 888px; height: 162px"></div>
+                    <div class="ring s3-f" style="left: 96px; top: 628px; width: 888px; height: 160px"></div>
+                    <div class="ring s3-f" style="left: 96px; top: 1207px; width: 888px; height: 160px"></div>
+                    <div class="ring s3-f" style="left: 96px; top: 1535px; width: 888px; height: 150px"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Shot 4 · household -->
+            <div id="s4" class="screen clip" data-start="11.5" data-duration="3.4" data-track-index="2">
+              <div class="k">
+                <div id="s4-scroll" class="scroll">
+                  <img class="shot" src="assets/screens/04_onboard_household.png" alt="Your household" />
+                  <div id="s4-spot" class="spot" style="left: 96px; top: 465px; width: 240px; height: 137px"></div>
+                  <div id="s4-ring" class="ring" style="left: 92px; top: 461px; width: 248px; height: 145px; border-radius: 80px"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Shot 5 · what to lodge -->
+            <div id="s5" class="screen clip" data-start="14.5" data-duration="3.9" data-track-index="2">
+              <div class="k">
+                <div id="s5-scroll" class="scroll">
+                  <img class="shot" src="assets/screens/06_onboard_what_to_lodge_picked.png" alt="What do you need lodged" />
+                  <div id="s5-ring" class="ring" style="left: 94px; top: 796px; width: 892px; height: 240px; border-radius: 40px"></div>
+                  <div id="s5-pop1" class="ring" style="left: 128px; top: 826px; width: 120px; height: 120px; border-radius: 50%"></div>
+                  <div id="s5-pop2" class="ring" style="left: 128px; top: 826px; width: 120px; height: 120px; border-radius: 50%"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Shot 6 · quick questions, TFN masked -->
+            <div id="s6" class="screen clip" data-start="18" data-duration="3.9" data-track-index="2">
+              <div class="k">
+                <div id="s6-scroll" class="scroll">
+                  <img class="shot" src="assets/screens/07_onboard_quick_questions_tfn_masked.png" alt="A few quick questions" />
+                  <div class="ring s6-pill" style="left: 98px; top: 387px; width: 187px; height: 133px; border-radius: 70px"></div>
+                  <div class="ring s6-pill" style="left: 98px; top: 657px; width: 187px; height: 133px; border-radius: 70px"></div>
+                  <div class="ring s6-pill" style="left: 98px; top: 1000px; width: 187px; height: 133px; border-radius: 70px"></div>
+                  <div id="s6-tfn" class="ring" style="left: 96px; top: 1808px; width: 888px; height: 112px; border-radius: 24px 24px 0 0"></div>
+                  <div id="s6-shield" class="badge" style="left: 470px; top: 1574px">
+                    <div class="badge-wave"></div>
+                    <img src="assets/icons/shield.svg" alt="" />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Shot 7 · contact, then check and send -->
+            <div id="s7" class="screen clip" data-start="21.5" data-duration="3.4" data-track-index="2">
+              <div class="k">
+                <div id="s7-a" class="scroll">
+                  <img class="shot" src="assets/screens/08_onboard_contact.png" alt="How can we reach you" />
+                </div>
+                <div id="s7-b" class="scroll">
+                  <img class="shot" src="assets/screens/09_onboard_check_and_send.png" alt="Check and send" />
+                  <div id="s7-sweep-box" style="position: absolute; left: 43px; top: 676px; width: 994px; height: 756px; border-radius: 30px; overflow: hidden">
+                    <div id="s7-sweep"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Shot 8 · welcome aboard -->
+            <div id="s8" class="screen clip" data-start="24.5" data-duration="5.4" data-track-index="2">
+              <div class="k">
+                <div id="s8-scroll" class="scroll">
+                  <img class="shot" src="assets/screens/10_welcome_aboard.png" alt="Welcome aboard" />
+                </div>
+              </div>
+            </div>
+
+            <!-- Shot 9 · sign in -->
+            <div id="s9" class="screen clip" data-start="29.5" data-duration="4.4" data-track-index="2">
+              <div class="k">
+                <div id="s9-scroll" class="scroll">
+                  <img class="shot" src="assets/screens/14_sign_in.png" alt="Sign in" />
+                  <div id="s9-mask"><div id="s9-caret"></div></div>
+                  <div id="s9-ring" class="ring" style="left: 92px; top: 897px; width: 896px; height: 161px"></div>
+                  <div id="s9-link" class="ring" style="left: 266px; top: 1556px; width: 548px; height: 78px; border-radius: 20px"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Shot 10 · upload folders, then done -->
+            <div id="s10" class="screen clip" data-start="33.5" data-duration="5.4" data-track-index="2">
+              <div class="k">
+                <div id="s10-a" class="scroll">
+                  <img class="shot" src="assets/screens/12_upload_folders.png" alt="Upload documents" />
+                </div>
+                <div id="s10-b" class="scroll">
+                  <img class="shot" src="assets/screens/13_upload_done.png" alt="Files uploaded" />
+                  <div id="s10-t1" class="ring" style="left: 156px; top: 2264px; width: 72px; height: 72px; border-radius: 50%"></div>
+                  <div id="s10-t2" class="ring" style="left: 156px; top: 3546px; width: 72px; height: 72px; border-radius: 50%"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Shot 11 · progress -->
+            <div id="s11" class="screen clip" data-start="38.5" data-duration="4.4" data-track-index="2">
+              <div class="k">
+                <div id="s11-scroll" class="scroll">
+                  <img class="shot" src="assets/screens/11_my_returns_progress_full.png" alt="My returns progress" />
+                  <div class="s11-hl" style="top: 2313px"></div>
+                  <div class="s11-hl" style="top: 2799px"></div>
+                  <div class="s11-hl" style="top: 3051px"></div>
+                  <div class="s11-hl" style="top: 3174px"></div>
+                  <div id="s11-fill"></div>
+                  <div class="ring s11-dot" style="left: 79px; top: 2293px"></div>
+                  <div class="ring s11-dot" style="left: 79px; top: 2779px"></div>
+                  <div class="ring s11-dot" style="left: 79px; top: 3031px"></div>
+                  <div class="ring s11-dot" style="left: 79px; top: 3154px"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Captions -->
+      <div id="c2" class="layer cap clip" data-start="3.5" data-duration="4.3" data-track-index="3">
+        <div class="chip"><h2><b>Step 1:</b><br />Tap <i>Start my tax return</i></h2></div>
+      </div>
+      <div id="c3" class="layer cap clip" data-start="7.5" data-duration="4.3" data-track-index="3">
+        <div class="chip"><h2>Tell us about you</h2></div>
+      </div>
+      <div id="c4" class="layer cap clip" data-start="11.5" data-duration="3.3" data-track-index="3">
+        <div class="chip"><h2>Your household</h2></div>
+      </div>
+      <div id="c5" class="layer cap clip" data-start="14.5" data-duration="3.8" data-track-index="3">
+        <div class="chip"><h2>Pick what you need lodged</h2></div>
+      </div>
+      <div id="c6" class="layer cap clip" data-start="18" data-duration="3.8" data-track-index="3">
+        <div class="chip"><h2>A few quick questions.</h2><p>Your TFN stays private.</p></div>
+      </div>
+      <div id="c7" class="layer cap clip" data-start="21.5" data-duration="3.3" data-track-index="3">
+        <div class="chip"><h2>Check and send</h2></div>
+      </div>
+      <div id="c8" class="layer cap clip" data-start="24.5" data-duration="5.3" data-track-index="3">
+        <div class="chip"><h2>Welcome aboard!</h2><p>Your client number saves to your phone.</p></div>
+      </div>
+      <div id="c9" class="layer cap clip" data-start="29.5" data-duration="4.3" data-track-index="3">
+        <div class="chip"><h2>Sign in any time:</h2><p>client number + last 4 digits of your mobile</p></div>
+      </div>
+      <div id="c10" class="layer cap clip" data-start="33.5" data-duration="5.3" data-track-index="3">
+        <div class="chip"><h2>Upload receipts straight<br />to the right folder</h2></div>
+      </div>
+      <div id="c11" class="layer cap clip" data-start="38.5" data-duration="4.3" data-track-index="3">
+        <div class="chip"><h2>Track your return,<br />step by step</h2></div>
+      </div>
+
+      <!-- Effects -->
+      <div id="fx2" class="layer fx clip" data-start="3.5" data-duration="4" data-track-index="4">
+        <div id="tap2" class="tap" style="left: 850px; top: 1301px">
+          <div class="wave"></div>
+          <div class="dot"></div>
+        </div>
+      </div>
+      <div id="fx8" class="layer fx clip" data-start="24.5" data-duration="5.4" data-track-index="4">
+        <div id="fx8-scrim"></div>
+        <div id="confetti"></div>
+        <img id="card" src="assets/screens/10b_client_number_card.png" alt="Client number card" />
+        <div id="dl"><svg viewBox="0 0 24 24" width="64" height="64" fill="none" stroke="#0A3529" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v12" /><path d="M6.5 10.5L12 16l5.5-5.5" /><path d="M5 20h14" /></svg></div>
+      </div>
+      <div id="fx9" class="layer fx clip" data-start="29.5" data-duration="4" data-track-index="4">
+        <img id="inset" src="assets/screens/15_inset.png" alt="Forgot your client number" />
+      </div>
+      <div id="fx10" class="layer fx clip" data-start="33.5" data-duration="5" data-track-index="4">
+        <div class="doc" id="doc1"><img src="assets/icons/doc.svg" alt="" /></div>
+        <div class="doc" id="doc2"><img src="assets/icons/doc.svg" alt="" /></div>
+        <div class="doc" id="doc3"><img src="assets/icons/doc.svg" alt="" /></div>
+        <div class="doc" id="doc4"><img src="assets/icons/doc.svg" alt="" /></div>
+      </div>
+
+      <!-- Shot 12 · end card -->
+      <div id="s12" class="layer clip" data-start="42.5" data-duration="3.5" data-track-index="1">
+        <img id="s12-logo" src="assets/logo-mascot.png" alt="Pinoy Accountants logo" />
+        <div id="s12-btn">Start your tax return · about 5 minutes<div id="s12-btn-wave"></div></div>
+        <div id="s12-url"><span>p</span><span>i</span><span>n</span><span>o</span><span>y</span><span>a</span><span>c</span><span>c</span><span>o</span><span>u</span><span>n</span><span>t</span><span>a</span><span>n</span><span>t</span><span>s</span><span>.</span><span>c</span><span>o</span><span>m</span><span>.</span><span>a</span><span>u</span></div>
+        <div id="s12-credit">Mar Binudin, CPA · Registered Tax Agent</div>
+      </div>
+    </div>
+
+    <script>
+      const tl = gsap.timeline({ paused: true });
+      const E = "expo.out"; // close to cubic-bezier(0.16, 1, 0.3, 1)
+
+      // Screenshot pixels → canvas pixels (phone screen is 832px wide at 124,574)
+      const K = 832 / 1080;
+      const cx = (x) => 124 + x * K;
+      const cy = (y, scroll) => 574 + (y - scroll) * K;
+
+      // Captions: chip rises and sharpens in, then leaves before the next shot
+      function caption(id, tIn, tOut) {
+        const chip = `#${id} .chip`;
+        tl.fromTo(
+          chip,
+          { opacity: 0, y: 30, filter: "blur(8px)" },
+          { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.6, ease: E },
+          tIn,
+        );
+        tl.fromTo(`${chip} > *`, { opacity: 0 }, { opacity: 1, duration: 0.45, ease: E, stagger: 0.12 }, tIn + 0.1);
+        if (tOut !== undefined) {
+          tl.to(chip, { opacity: 0, y: -20, filter: "blur(6px)", duration: 0.3, ease: "power2.in" }, tOut);
+        }
+      }
+
+      // Ring: settles onto its target
+      function ring(sel, t, stagger = 0) {
+        tl.fromTo(sel, { opacity: 0, scale: 1.12 }, { opacity: 1, scale: 1, duration: 0.5, ease: E, stagger }, t);
+      }
+
+      // Next screen crossfades in over the previous one
+      function fadeIn(sel, t) {
+        tl.fromTo(sel, { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "power2.inOut" }, t);
+      }
+
+      // ---- Shot 1 · 0–3.5 ----
+      tl.fromTo("#stripe i", { scaleX: 0 }, { scaleX: 1, duration: 0.6, ease: E, stagger: 0.12 }, 0.1);
+      tl.fromTo("#s1-logo", { opacity: 0, scale: 0.85 }, { opacity: 1, scale: 1, duration: 1.0, ease: E }, 0.2);
+      tl.fromTo("#s1-ring-c", { attr: { "stroke-dashoffset": 1760 } }, { attr: { "stroke-dashoffset": 0 }, duration: 1.1, ease: "power2.inOut" }, 0.3);
+      tl.fromTo("#s1-ring", { rotation: -40 }, { rotation: 0, duration: 1.1, ease: "power2.inOut" }, 0.3);
+      tl.fromTo("#s1-word span", { opacity: 0 }, { opacity: 1, duration: 0.01, stagger: 0.05 }, 0.8);
+      tl.fromTo(
+        "#s1-chip",
+        { opacity: 0, y: 30, filter: "blur(8px)" },
+        { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.6, ease: E },
+        1.6,
+      );
+      tl.fromTo("#s1-chip > *", { opacity: 0 }, { opacity: 1, duration: 0.45, ease: E, stagger: 0.12 }, 1.7);
+      tl.to(["#s1-logo", "#s1-ring", "#s1-word", "#s1-chip"], { opacity: 0, y: -80, duration: 0.4, ease: "power2.in", stagger: 0.05 }, 3.3);
+
+      // ---- Shot 2 · 3.5–7.5 · homepage ----
+      tl.fromTo("#phone-frame", { opacity: 0, y: 520 }, { opacity: 1, y: 0, duration: 1.0, ease: E }, 3.5);
+      caption("c2", 3.85, 7.3);
+      tl.fromTo("#s2-scroll", { y: 0 }, { y: -270, duration: 1.8, ease: "power2.inOut" }, 4.3);
+      ring("#s2-ring", 6.0);
+      tl.fromTo("#tap2", { opacity: 0, scale: 1.4 }, { opacity: 1, scale: 1, duration: 0.35, ease: E }, 6.15);
+      tl.fromTo("#tap2 .dot", { scale: 1 }, { scale: 0.8, duration: 0.25, ease: "power2.out" }, 6.5);
+      tl.to("#tap2 .dot", { scale: 1, duration: 0.3, ease: E }, 6.75);
+      tl.fromTo("#tap2 .wave", { scale: 0.6, opacity: 0.9 }, { scale: 2.2, opacity: 0, duration: 0.8, ease: "power2.out" }, 6.55);
+      tl.to("#tap2", { opacity: 0, duration: 0.3, ease: "power2.in" }, 7.2);
+
+      // ---- Shot 3 · 7.5–11.5 · about you: empty → filled, fields one by one ----
+      fadeIn("#s3", 7.5);
+      caption("c3", 7.7, 11.3);
+      tl.fromTo("#s3-filled", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "power2.inOut" }, 8.4);
+      tl.fromTo("#s3-scroll", { y: 0 }, { y: -150, duration: 2.4, ease: "power2.inOut" }, 8.6);
+      ring(".s3-f", 9.0, 0.15);
+
+      // ---- Shot 4 · 11.5–14.5 · household: card slides left, "Single" highlights ----
+      tl.to("#s3-scroll", { x: -1080, duration: 0.7, ease: "power3.inOut" }, 11.5);
+      tl.fromTo("#s4-scroll", { x: 1080 }, { x: 0, duration: 0.7, ease: "power3.inOut" }, 11.5);
+      caption("c4", 11.75, 14.3);
+      tl.fromTo("#s4-spot", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "power2.inOut" }, 12.4);
+      ring("#s4-ring", 12.5);
+
+      // ---- Shot 5 · 14.5–18 · what to lodge: tick pops ----
+      fadeIn("#s5", 14.5);
+      caption("c5", 14.7, 17.8);
+      ring("#s5-ring", 15.2);
+      tl.fromTo("#s5-pop1", { opacity: 1, scale: 0.6 }, { opacity: 0, scale: 2.0, duration: 0.8, ease: "power2.out" }, 15.6);
+      tl.fromTo("#s5-pop2", { opacity: 1, scale: 0.6 }, { opacity: 0, scale: 2.0, duration: 0.8, ease: "power2.out" }, 15.85);
+
+      // ---- Shot 6 · 18–21.5 · quick questions: pills flick, shield pulses ----
+      fadeIn("#s6", 18);
+      caption("c6", 18.2, 21.3);
+      document.querySelectorAll(".s6-pill").forEach((el, i) => {
+        const t = 18.6 + i * 0.15;
+        tl.fromTo(el, { opacity: 0 }, { opacity: 1, duration: 0.25, ease: E }, t);
+        tl.fromTo(el, { x: 0, width: 187 }, { x: 196, width: 180, duration: 0.4, ease: E }, t + 0.3);
+      });
+      tl.fromTo("#s6-scroll", { y: 0 }, { y: -310, duration: 1.0, ease: "power2.inOut" }, 19.5);
+      ring("#s6-tfn", 20.4);
+      tl.fromTo("#s6-shield", { opacity: 0, scale: 0.5 }, { opacity: 1, scale: 1, duration: 0.5, ease: "back.out(1.6)" }, 20.5);
+      tl.fromTo("#s6-shield .badge-wave", { opacity: 0.9, scale: 1 }, { opacity: 0, scale: 1.8, duration: 0.8, ease: "power2.out" }, 20.85);
+
+      // ---- Shot 7 · 21.5–24.5 · contact → push → check and send, sweep ----
+      fadeIn("#s7", 21.5);
+      caption("c7", 21.7, 24.3);
+      tl.fromTo("#s7-a", { x: 0 }, { x: -1080, duration: 0.65, ease: "power3.inOut" }, 22.4);
+      tl.fromTo("#s7-b", { x: 1080 }, { x: 0, duration: 0.65, ease: "power3.inOut" }, 22.4);
+      tl.fromTo("#s7-sweep", { x: -320, skewX: -18 }, { x: 1100, skewX: -18, duration: 1.0, ease: "power2.inOut" }, 23.2);
+
+      // ---- Shot 8 · 24.5–29.5 · welcome aboard: confetti, card flips out, download arrow ----
+      fadeIn("#s8", 24.5);
+      caption("c8", 24.7, 29.3);
+      (function confetti() {
+        let seed = 7;
+        const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+        const box = document.getElementById("confetti");
+        const cols = ["#B8903A", "#DDBF70", "#0F4C3A", "#2E7D5B", "#DDBF70"];
+        for (let i = 0; i < 44; i++) {
+          const p = document.createElement("i");
+          const w = 14 + rnd() * 14;
+          p.style.width = w + "px";
+          p.style.height = w * (0.4 + rnd() * 0.5) + "px";
+          p.style.left = 140 + rnd() * 800 + "px";
+          p.style.background = cols[i % cols.length];
+          box.appendChild(p);
+          const t0 = 24.75 + rnd() * 0.6;
+          tl.fromTo(
+            p,
+            { y: 440 + rnd() * 120, rotation: rnd() * 180, opacity: 1 },
+            { y: 1500 + rnd() * 380, x: (rnd() - 0.5) * 220, rotation: 360 + rnd() * 540, duration: 2.4 + rnd() * 0.8, ease: "power1.in" },
+            t0,
+          );
+          tl.to(p, { opacity: 0, duration: 0.4, ease: "power1.in" }, t0 + 2.2);
+        }
+      })();
+      // the card starts where the client-number card sits on the welcome screen
+      tl.fromTo(
+        "#card",
+        { opacity: 0, x: 0, y: cy(1264, 0) - (650 + 359), scale: 672 / 900, rotationX: 0, transformPerspective: 1800 },
+        { opacity: 1, duration: 0.3, ease: "power2.out" },
+        25.9,
+      );
+      tl.fromTo("#fx8-scrim", { opacity: 0 }, { opacity: 1, duration: 0.6, ease: "power2.inOut" }, 26.1);
+      tl.to("#card", { y: 0, scale: 1, rotationX: 360, duration: 1.0, ease: E }, 26.1);
+      tl.fromTo("#dl", { opacity: 0, y: -160 }, { opacity: 1, y: 0, duration: 0.7, ease: "back.out(1.8)" }, 27.2);
+      tl.to(["#card", "#dl", "#fx8-scrim"], { opacity: 0, y: 40, duration: 0.3, ease: "power2.in" }, 29.2);
+
+      // ---- Shot 9 · 29.5–33.5 · sign in: typing, forgot inset ----
+      fadeIn("#s9", 29.5);
+      caption("c9", 29.7, 33.3);
+      ring("#s9-ring", 29.8);
+      tl.fromTo("#s9-mask", { x: 0 }, { x: 270, duration: 1.2, ease: "steps(10)" }, 30.1);
+      tl.to("#s9-mask", { opacity: 0, duration: 0.3, ease: "power2.out" }, 31.6);
+      ring("#s9-link", 31.6);
+      tl.fromTo("#inset", { opacity: 0, y: 60, scale: 0.9, rotation: 3 }, { opacity: 1, y: 0, scale: 1, rotation: 2, duration: 0.6, ease: E }, 31.9);
+      tl.to("#inset", { opacity: 0, y: 40, duration: 0.3, ease: "power2.in" }, 33.2);
+
+      // ---- Shot 10 · 33.5–38.5 · upload: documents fly into the four folders ----
+      fadeIn("#s10", 33.5);
+      caption("c10", 33.7, 38.3);
+      tl.fromTo("#s10-a", { y: 0 }, { y: -310, duration: 0.9, ease: "power2.inOut" }, 33.8);
+      function fly(sel, t, tx, ty) {
+        tl.fromTo(
+          sel,
+          { opacity: 0, x: 1000, y: 560, scale: 0.8, rotation: 12 },
+          { opacity: 1, x: tx, y: ty, scale: 1, rotation: 0, duration: 0.7, ease: "power3.inOut" },
+          t,
+        );
+        tl.to(sel, { opacity: 0, scale: 0.5, duration: 0.3, ease: "power2.in" }, t + 0.7);
+      }
+      fly("#doc1", 34.6, cx(151), cy(1810, 310));
+      tl.fromTo("#s10-b", { opacity: 0, y: -1600 }, { opacity: 1, y: -1600, duration: 0.4, ease: "power2.inOut" }, 35.4);
+      fly("#doc2", 35.8, cx(152), cy(2344, 1600));
+      ring("#s10-t1", 36.5);
+      fly("#doc3", 36.1, cx(152), cy(3094, 1600));
+      tl.to("#s10-b", { y: -2300, duration: 0.8, ease: "power2.inOut" }, 36.9);
+      fly("#doc4", 37.4, cx(152), cy(3626, 2300));
+      ring("#s10-t2", 37.9);
+
+      // ---- Shot 11 · 38.5–42.5 · progress: Received → In preparation → Lodged → Completed ----
+      fadeIn("#s11", 38.5);
+      caption("c11", 38.7, 42.3);
+      tl.fromTo("#s11-scroll", { y: 0 }, { y: -2120, duration: 1.2, ease: "power2.inOut" }, 38.8);
+      tl.fromTo("#s11-fill", { scaleY: 0 }, { scaleY: 1, duration: 1.6, ease: "none" }, 40.0);
+      [0, 0.565, 0.857, 1].forEach((f, i) => {
+        const t = 40.0 + f * 1.6;
+        tl.fromTo(document.querySelectorAll(".s11-dot")[i], { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.45, ease: E }, t);
+        tl.fromTo(document.querySelectorAll(".s11-hl")[i], { opacity: 0 }, { opacity: 1, duration: 0.4, ease: E }, t);
+      });
+      tl.to("#phone-frame", { opacity: 0, scale: 0.94, duration: 0.4, ease: "power2.in" }, 42.5);
+
+      // ---- Shot 12 · 42.5–46 · end card ----
+      tl.fromTo("#s12", { clipPath: "circle(0% at 50% 60%)" }, { clipPath: "circle(120% at 50% 60%)", duration: 0.8, ease: "power2.inOut" }, 42.5);
+      tl.fromTo("#s12-logo", { opacity: 0, scale: 1.12 }, { opacity: 1, scale: 1, duration: 0.9, ease: E }, 42.8);
+      tl.fromTo("#s12-btn", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.6, ease: E }, 43.1);
+      tl.fromTo("#s12-url span", { opacity: 0 }, { opacity: 1, duration: 0.01, stagger: 0.035 }, 43.35);
+      tl.fromTo("#s12-credit", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.6, ease: E }, 43.7);
+      tl.to("#s12-btn", { scale: 1.05, duration: 0.3, ease: "power2.out" }, 44.4);
+      tl.to("#s12-btn", { scale: 1, duration: 0.45, ease: E }, 44.7);
+      tl.fromTo("#s12-btn-wave", { opacity: 0.9, scale: 1 }, { opacity: 0, scale: 1.25, duration: 0.8, ease: "power2.out" }, 44.45);
+
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>
