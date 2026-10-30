@@ -1,0 +1,202 @@
+<template>
+  <style>
+    #root {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      background: #fffdf6;
+      --blue: #0d1b96;
+      --red: #b8101c;
+      --yellow: #f2d21b;
+      --ink: #14162b;
+    }
+    #intro-glow {
+      position: absolute;
+      left: 160px;
+      top: -260px;
+      width: 1600px;
+      height: 1600px;
+      background: radial-gradient(
+        circle 780px at 50% 50%,
+        rgba(242, 210, 27, 0.28) 0%,
+        rgba(242, 210, 27, 0.1) 45%,
+        rgba(255, 253, 246, 0) 100%
+      );
+    }
+    /* The logo at its source size (1782 x 2000), centred; GSAP scales and moves it. */
+    #intro-logo {
+      position: absolute;
+      left: 69px;
+      top: -460px;
+      width: 1782px;
+      height: 2000px;
+    }
+    #intro-logo img {
+      position: absolute;
+      display: block;
+    }
+    .intro-full {
+      left: 0;
+      top: 0;
+      width: 1782px;
+      height: 2000px;
+    }
+    #intro-rays-blue,
+    #intro-rays-red {
+      transform-origin: 51% 44%;
+    }
+    #intro-mascot {
+      transform-origin: 50% 46%;
+    }
+    #intro-star1 {
+      left: 488px;
+      top: 62px;
+    }
+    #intro-star2 {
+      left: 1053px;
+      top: 62px;
+    }
+    #intro-star3 {
+      left: 759px;
+      top: 1703px;
+    }
+    #intro-title {
+      position: absolute;
+      left: 875px;
+      top: 330px;
+      font-family: "Montserrat", sans-serif;
+      font-weight: 800;
+      line-height: 1;
+      letter-spacing: -0.02em;
+    }
+    #intro-title .line {
+      display: block;
+      white-space: nowrap;
+    }
+    #intro-line1 {
+      font-size: 190px;
+      color: var(--blue);
+    }
+    #intro-line2 {
+      margin-top: 18px;
+      font-size: 128px;
+      color: var(--red);
+    }
+    #intro-title .ch {
+      display: inline-block;
+    }
+    #intro-bar {
+      margin-top: 34px;
+      width: 100%;
+      height: 16px;
+      border-radius: 8px;
+      background: var(--yellow);
+      transform-origin: 0% 50%;
+    }
+  </style>
+  <div id="root" data-composition-id="intro" data-width="1920" data-height="1080">
+    <div id="intro-glow" data-layout-allow-overflow class="clip" data-start="0" data-duration="10" data-track-index="0"></div>
+
+    <div id="intro-logo" data-layout-allow-overflow class="clip" data-start="0" data-duration="10" data-track-index="1">
+      <img id="intro-rays-blue" class="intro-full" src="assets/rays-blue.png" alt="" />
+      <img id="intro-rays-red" class="intro-full" src="assets/rays-red.png" alt="" />
+      <img id="intro-star1" src="assets/star1.png" alt="" />
+      <img id="intro-star2" src="assets/star2.png" alt="" />
+      <img id="intro-star3" src="assets/star3.png" alt="" />
+      <img id="intro-mascot" class="intro-full" src="assets/mascot.png" alt="Pinoy Accountants mascot" />
+    </div>
+
+    <div id="intro-title" class="clip" data-start="0" data-duration="10" data-track-index="2">
+      <span id="intro-line1" class="line"
+        ><span class="ch">P</span><span class="ch">i</span><span class="ch">n</span
+        ><span class="ch">o</span><span class="ch">y</span></span
+      >
+      <span id="intro-line2" class="line"
+        ><span class="ch">A</span><span class="ch">c</span><span class="ch">c</span
+        ><span class="ch">o</span><span class="ch">u</span><span class="ch">n</span
+        ><span class="ch">t</span><span class="ch">a</span><span class="ch">n</span
+        ><span class="ch">t</span><span class="ch">s</span></span
+      >
+      <div id="intro-bar"></div>
+    </div>
+  </div>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    const S = 0.44; // logo scale while it builds, centred
+    const S2 = 0.3; // logo scale beside the name
+
+    // Sun glow and logo start state
+    tl.fromTo("#intro-glow", { opacity: 0, scale: 0.4 }, { opacity: 1, scale: 1, duration: 1.4, ease: "power2.out" }, 0);
+    tl.fromTo("#intro-logo", { scale: S, x: 0 }, { scale: S, x: 0, duration: 0.01 }, 0);
+
+    // 1. The sun's rays fan open: blue from the left, red from the right
+    tl.fromTo(
+      "#intro-rays-blue",
+      { opacity: 0, rotation: -70, scale: 0.55 },
+      { opacity: 1, rotation: 0, scale: 1, duration: 1.1, ease: "expo.out" },
+      0.2,
+    );
+    tl.fromTo(
+      "#intro-rays-red",
+      { opacity: 0, rotation: 70, scale: 0.55 },
+      { opacity: 1, rotation: 0, scale: 1, duration: 1.1, ease: "expo.out" },
+      0.32,
+    );
+
+    // 2. Three stars pop in, one after another
+    ["#intro-star1", "#intro-star2", "#intro-star3"].forEach((sel, i) => {
+      tl.fromTo(
+        sel,
+        { opacity: 0, scale: 0, rotation: -120 },
+        { opacity: 1, scale: 1, rotation: 0, duration: 0.55, ease: "back.out(2.2)" },
+        0.95 + i * 0.13,
+      );
+    });
+
+    // 3. The mascot pops up: stretch, squash, settle
+    tl.fromTo(
+      "#intro-mascot",
+      { opacity: 0, scaleX: 0.2, scaleY: 0.2, y: 160 },
+      { opacity: 1, scaleX: 0.92, scaleY: 1.12, y: -30, duration: 0.38, ease: "power3.out" },
+      1.35,
+    );
+    tl.to("#intro-mascot", { scaleX: 1.08, scaleY: 0.9, y: 10, duration: 0.16, ease: "power2.in" }, 1.73);
+    tl.to("#intro-mascot", { scaleX: 1, scaleY: 1, y: 0, duration: 0.5, ease: "elastic.out(1, 0.45)" }, 1.89);
+
+    // Head tilt, like he's saying "ayos!"
+    tl.to("#intro-mascot", { rotation: -8, duration: 0.22, ease: "power2.out" }, 2.45);
+    tl.to("#intro-mascot", { rotation: 5, duration: 0.28, ease: "power2.inOut" }, 2.67);
+    tl.to("#intro-mascot", { rotation: 0, duration: 0.5, ease: "elastic.out(1, 0.5)" }, 2.95);
+
+    // 4. The logo slides left and shrinks to make room for the name
+    tl.to("#intro-logo", { x: -410, scale: S2, duration: 0.9, ease: "power3.inOut" }, 3.3);
+    tl.to("#intro-glow", { x: -410, scale: 0.75, duration: 0.9, ease: "power3.inOut" }, 3.3);
+
+    // 5. The name arrives letter by letter
+    tl.fromTo(
+      "#intro-line1 .ch",
+      { opacity: 0, y: 60, filter: "blur(10px)" },
+      { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.6, ease: "expo.out", stagger: 0.045 },
+      3.85,
+    );
+    tl.fromTo(
+      "#intro-line2 .ch",
+      { opacity: 0, y: 50, filter: "blur(10px)" },
+      { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.6, ease: "expo.out", stagger: 0.035 },
+      4.15,
+    );
+    tl.fromTo("#intro-bar", { scaleX: 0 }, { scaleX: 1, duration: 0.7, ease: "expo.out" }, 4.7);
+
+    // 6. Thumbs-up pump from the mascot while the name holds
+    tl.to("#intro-mascot", { y: -40, scaleY: 1.05, scaleX: 0.97, duration: 0.18, ease: "power2.out" }, 6.0);
+    tl.to("#intro-mascot", { y: 0, scaleY: 1, scaleX: 1, duration: 0.55, ease: "back.out(2.5)" }, 6.18);
+
+    // Stars twinkle once
+    ["#intro-star1", "#intro-star2", "#intro-star3"].forEach((sel, i) => {
+      tl.to(sel, { scale: 1.25, rotation: 20, duration: 0.18, ease: "power2.out" }, 6.9 + i * 0.1);
+      tl.to(sel, { scale: 1, rotation: 0, duration: 0.4, ease: "back.out(2)" }, 7.08 + i * 0.1);
+    });
+
+    window.__timelines["intro"] = tl;
+  </script>
+</template>
