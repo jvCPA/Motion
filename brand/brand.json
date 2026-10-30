@@ -1,0 +1,44 @@
+{
+  "name": "Pinoy Accountants",
+  "tagline": "Tax and accounting that finally makes sense.",
+  "greeting": "Kumusta, Kabayan!",
+  "website": "pinoyaccountants.com.au",
+  "portal": "pinoyaccountants.com.au/portal.html",
+  "credit": "Mar Binudin, CPA · Registered Tax Agent",
+  "colors": {
+    "forest": "#0F4C3A",
+    "forest_deep": "#0A3529",
+    "forest_soft": "#E7F0EA",
+    "gold": "#B8903A",
+    "gold_light": "#DDBF70",
+    "ink_gold": "#8A6A22",
+    "paper": "#FBF8F1",
+    "line": "#E4DECF",
+    "ink": "#1B2A25",
+    "muted": "#53635D",
+    "note": "#FFF6DC",
+    "white": "#FFFFFF",
+    "ph_blue": "#0038A8",
+    "ph_red": "#CE1126"
+  },
+  "fonts": {
+    "display": "Fraunces (serif, weights 500/700) — headings",
+    "body": "DM Sans (400/500/600/700) — body, buttons, captions",
+    "accent": "Caveat 600 — optional handwritten accent only"
+  },
+  "easing": "cubic-bezier(0.16, 1, 0.3, 1)",
+  "top_stripe": "3 equal bands: #0038A8 | #B8903A | #CE1126 (used across the top of every page)",
+  "onboarding_steps": [
+    "1 Let's start with you",
+    "2 Your household",
+    "3 What do you need lodged?",
+    "4 A few quick questions",
+    "5 How can we reach you?",
+    "6 Check and send"
+  ],
+  "after_sending": "Welcome aboard! Client number card (e.g. PA-C-7K4Q2) saves to the phone automatically.",
+  "sign_in": "Client number + last 4 digits of your mobile. 'Forgot your client number?' emails it to you.",
+  "upload_folders": ["Work expense receipts", "Rental property", "Business schedule", "Other documents"],
+  "progress_stages": ["Received", "Waiting on your documents", "Documents received", "In preparation", "Ready for your review", "Lodged with the ATO", "Completed"],
+  "sample_data_note": "All screenshots use made-up sample data (Juan Dela Cruz, PA-C-7K4Q2, juan@example.com). The TFN is masked."
+}
